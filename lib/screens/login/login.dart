@@ -1,3 +1,4 @@
+import 'package:alpaga/res.dart';
 import 'package:flutter/material.dart';
 import 'package:alpaga/screens/home/home_screen.dart';
 import 'package:alpaga/services/api_service.dart';
@@ -19,6 +20,12 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+    final logo = Image(
+      image: AssetImage(Res.alpagaBaseLogo),
+      width: 200.0,
+      height: 200.0,
+    );
+
     final email = TextFormField(
       keyboardType: TextInputType.emailAddress,
       autofocus: false,
@@ -39,7 +46,8 @@ class _LoginState extends State<Login> {
     );
 
     final loginButton = Container(
-      width: MediaQuery.of(context).size.width / 2.5,
+      width: 90,
+      height: 40,
       child: RaisedButton(
         onPressed: () {
           Navigator.push(
@@ -48,7 +56,7 @@ class _LoginState extends State<Login> {
           );
         },
         padding: EdgeInsets.all(12),
-        color: ColorConstants.blue,
+        color: ColorConstants.alpaBlue,
         child: Text('Log In',
             style: TextStyle(
                 fontSize: 16,
@@ -68,19 +76,15 @@ class _LoginState extends State<Login> {
       backgroundColor: Colors.white,
       body: Stack(
         children: <Widget>[
-          Column(
-            children: <Widget>[
-              Container(
-                height: MediaQuery.of(context).size.height / 2,
-                width: MediaQuery.of(context).size.width,
-                color: Colors.white,
-              ),
-              Container(
-                height: MediaQuery.of(context).size.height / 2,
-                width: MediaQuery.of(context).size.width,
-                color: ColorConstants.blue,
-              ),
-            ],
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [ColorConstants.lightOrange, ColorConstants.darkOrange])
+            ),
           ),
           Center(
             child: Card(
@@ -88,16 +92,19 @@ class _LoginState extends State<Login> {
               child: Container(
                 padding: EdgeInsets.all(42),
                 width: MediaQuery.of(context).size.width / 2.5,
-                height: MediaQuery.of(context).size.height / 1.5,
+                height: MediaQuery.of(context).size.height / 1.2,
                 child: Column(
                   children: <Widget>[
                     SizedBox(height: 62.0),
+                    logo,
+                    SizedBox(height: 8.0),
                     Center(
                         child: Text(
-                      "Admin Material",
+                      "Alpaga",
                       style: TextStyle(
-                        fontSize: 28,
+                        fontSize: 36,
                         fontWeight: FontWeight.bold,
+                        color: ColorConstants.alpaBlue,
                       ),
                     )),
                     SizedBox(height: 48.0),
