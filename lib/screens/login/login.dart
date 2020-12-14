@@ -29,9 +29,13 @@ class _LoginState extends State<Login> {
     final email = TextFormField(
       keyboardType: TextInputType.emailAddress,
       autofocus: false,
+      cursorColor: ColorConstants.darkOrange,
       decoration: InputDecoration(
         hintText: 'Email',
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: ColorConstants.darkOrange),
+        ),
       ),
     );
 
@@ -39,9 +43,13 @@ class _LoginState extends State<Login> {
       autofocus: false,
       initialValue: '',
       obscureText: true,
+      cursorColor: ColorConstants.darkOrange,
       decoration: InputDecoration(
         hintText: 'Password',
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: ColorConstants.darkOrange),
+        ),
       ),
     );
 
@@ -118,6 +126,7 @@ class _LoginState extends State<Login> {
                         Row(
                           children: <Widget>[
                             Checkbox(
+                              activeColor: ColorConstants.lightOrange,
                               value: isChecked,
                               onChanged: (value) {
                                 setState(() {
