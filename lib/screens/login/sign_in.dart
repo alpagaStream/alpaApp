@@ -1,19 +1,18 @@
 import 'package:alpaga/res.dart';
-import 'package:alpaga/screens/login/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:alpaga/screens/home/home_screen.dart';
 import 'package:alpaga/services/api_service.dart';
 import 'package:alpaga/utils/color_constants.dart';
 
-class Login extends StatefulWidget {
-  Login({Key key, this.title}) : super(key: key);
+class SignIn extends StatefulWidget {
+  SignIn({Key key, this.title}) : super(key: key);
   final String title;
   @override
-  _LoginState createState() => _LoginState();
+  _SignInState createState() => _SignInState();
 }
 
 
-class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
+class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
 
   bool isChecked = false;
   AnimationController controller;
@@ -30,11 +29,6 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
     cardInAnim = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
         parent: controller,
         curve: Interval(.5, 1.0, curve: Curves.fastOutSlowIn)));
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   @override
@@ -112,17 +106,31 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
           )
       ),
       onPressed: () {
-        Navigator.pushReplacement(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (context, animation1, animation2) => SignIn(),
-            transitionDuration: Duration(seconds: 0),
-          ),
-        );
+
       },
     );
 
-    final loginCard = Center(
+    final twitchButton = FlatButton(
+      color: ColorConstants.twitchViolet,
+      height: 48,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(const Radius.circular(20)),
+      ),
+      child: Text(
+          'TWITCH CONNECT',
+          style: TextStyle(
+              fontSize: 14,
+              color: Colors.white,
+              fontWeight: FontWeight.bold
+          )
+      ),
+      onPressed: () {
+        print("****** twitchButton onPressed ********");
+        ApiData.twitchConnect();
+      },
+    );
+
+    final signInCard = Center(
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(const Radius.circular(20)),
@@ -147,6 +155,8 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                       color: ColorConstants.alpaBlue,
                     ),
                   )),
+              SizedBox(height: 14.0),
+              twitchButton,
               SizedBox(height: 48.0),
               email,
               SizedBox(height: 8.0),
@@ -201,10 +211,10 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                   ),
                 ),
                 AnimatedOpacity(
-                    opacity: 1.0,
+                    opacity: 1,
                     duration: Duration(milliseconds: 100),
                     // The green box must be a child of the AnimatedOpacity widget.
-                    child: loginCard
+                    child: signInCard
                 ),
               ],
             ),

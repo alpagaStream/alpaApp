@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       routes: routes,
       theme: ThemeData(fontFamily: 'HelveticaNeue'),
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Alpaga',
     );
   }
 }
