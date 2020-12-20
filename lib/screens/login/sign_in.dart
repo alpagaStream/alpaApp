@@ -1,8 +1,15 @@
+
 import 'package:alpaga/res.dart';
+import 'package:alpaga/screens/login/login.dart';
+import 'package:alpaga/screens/login/twitch_login.dart';
+import 'package:alpaga/widgets/twitch_connect_button.dart';
 import 'package:flutter/material.dart';
 import 'package:alpaga/screens/home/home_screen.dart';
-import 'package:alpaga/services/api_service.dart';
 import 'package:alpaga/utils/color_constants.dart';
+import 'package:flutter/services.dart';
+
+import '../../fonts.dart';
+
 
 class SignIn extends StatefulWidget {
   SignIn({Key key, this.title}) : super(key: key);
@@ -15,8 +22,24 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
 
   bool isChecked = false;
+
+  final userNameTextController = TextEditingController();
+  final emailTextController = TextEditingController();
+  final password1TextController = TextEditingController();
+  final password2TextController = TextEditingController();
+
   AnimationController controller;
   Animation cardInAnim;
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    userNameTextController.dispose();
+    emailTextController.dispose();
+    password1TextController.dispose();
+    password2TextController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -33,16 +56,26 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final logo = Image(
-      image: AssetImage(Res.alpagaBaseLogo),
-      width: 200.0,
-      height: 200.0,
+
+    final userName = TextFormField(
+      keyboardType: TextInputType.name,
+      autofocus: false,
+      cursorColor: ColorConstants.darkOrange,
+      controller: userNameTextController,
+      decoration: InputDecoration(
+        hintText: 'User Name',
+        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: ColorConstants.darkOrange),
+        ),
+      ),
     );
 
     final email = TextFormField(
       keyboardType: TextInputType.emailAddress,
       autofocus: false,
       cursorColor: ColorConstants.darkOrange,
+      controller: emailTextController,
       decoration: InputDecoration(
         hintText: 'Email',
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
@@ -57,6 +90,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
       initialValue: '',
       obscureText: true,
       cursorColor: ColorConstants.darkOrange,
+      controller: password1TextController,
       decoration: InputDecoration(
         hintText: 'Password',
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
@@ -66,11 +100,80 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
       ),
     );
 
+    final validatePassword = TextFormField(
+      autofocus: false,
+      initialValue: '',
+      obscureText: true,
+      cursorColor: ColorConstants.darkOrange,
+      controller: password2TextController,
+      decoration: InputDecoration(
+        hintText: 'Verify Password',
+        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: ColorConstants.darkOrange),
+        ),
+      ),
+    );
+
+    Future<void> _showMyDialog(String text) async {
+      return showDialog<void>(
+        context: context,
+        barrierDismissible: false, // user must tap button!
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('AlertDialog Title'),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text('Incorrect sign in !'),
+                  Text(text),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text('Approve'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     final loginButton = Container(
       width: 90,
       height: 40,
       child: RaisedButton(
         onPressed: () {
+
+          String userName = userNameTextController.text;
+          String email = emailTextController.text;
+          String pw1 = password1TextController.text;
+          String pw2 = password2TextController.text;
+
+          if(userName.isEmpty) {
+            _showMyDialog('You must chose an user name !');
+            return;
+          }
+
+          if(email.isEmpty) {
+            _showMyDialog('Invalid email address');
+            return;
+          }
+
+          if(pw1.isEmpty) {
+            _showMyDialog('Choose a password');
+            return;
+          }
+
+          if(pw2.isEmpty || pw2 != pw1) {
+            _showMyDialog("Passwords doesn't match");
+            return;
+          }
+
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => HomeScreen()),
@@ -88,17 +191,10 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
       ),
     );
 
-    final forgotLabel = FlatButton(
-      child: Text(
-        'Forgot password?',
-        style: TextStyle(color: Colors.black54),
-      ),
-      onPressed: () {},
-    );
 
     final signUpButton = FlatButton(
       child: Text(
-          'Sign up',
+          'Sign in',
           style: TextStyle(
               fontSize: 16,
               color: ColorConstants.darkOrange,
@@ -106,31 +202,19 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
           )
       ),
       onPressed: () {
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
 
+
+            pageBuilder: (context, animation1, animation2) => Login(),
+            transitionDuration: Duration(seconds: 0),
+          ),
+        );
       },
     );
 
-    final twitchButton = FlatButton(
-      color: ColorConstants.twitchViolet,
-      height: 48,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(const Radius.circular(20)),
-      ),
-      child: Text(
-          'TWITCH CONNECT',
-          style: TextStyle(
-              fontSize: 14,
-              color: Colors.white,
-              fontWeight: FontWeight.bold
-          )
-      ),
-      onPressed: () {
-        print("****** twitchButton onPressed ********");
-        ApiData.twitchConnect();
-      },
-    );
-
-    final signInCard = Center(
+    final loginCard = Center(
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(const Radius.circular(20)),
@@ -142,8 +226,12 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
           height: MediaQuery.of(context).size.height / 1.2,
           child: Column(
             children: <Widget>[
-              SizedBox(height: 62.0),
-              logo,
+              SizedBox(height: 32.0),
+              Image(
+                image: AssetImage(Res.alpagaBaseLogo),
+                width: 160.0,
+                height: 160.0,
+              ),
               SizedBox(height: 8.0),
               Center(
                   child: Text(
@@ -155,37 +243,34 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
                       color: ColorConstants.alpaBlue,
                     ),
                   )),
-              SizedBox(height: 14.0),
-              twitchButton,
-              SizedBox(height: 48.0),
+              SizedBox(height: 30.0),
+              TwitchConnectButton(),
+              SizedBox(height: 30.0),
+              userName,
+              SizedBox(height: 8.0),
               email,
               SizedBox(height: 8.0),
               password,
+              SizedBox(height: 8.0),
+              validatePassword,
               SizedBox(height: 24.0),
+              loginButton,
+              SizedBox(height: 16.0),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Row(
                     children: <Widget>[
-                      Checkbox(
-                        activeColor: ColorConstants.lightOrange,
-                        value: isChecked,
-                        onChanged: (value) {
-                          setState(() {
-                            isChecked = value;
-                          });
-                        },
+                      Text(
+                        'Already signed in ?',
+                        style: TextStyle(color: Colors.black54),
                       ),
-                      Text("Remember Me")
+                      signUpButton,
                     ],
                   ),
-                  forgotLabel,
                 ],
               ),
-              SizedBox(height: 18.0),
-              loginButton,
-              SizedBox(height: 16.0),
-              signUpButton,
+
             ],
           ),
         ),
@@ -211,10 +296,10 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
                   ),
                 ),
                 AnimatedOpacity(
-                    opacity: 1,
+                    opacity: 1.0,
                     duration: Duration(milliseconds: 100),
                     // The green box must be a child of the AnimatedOpacity widget.
-                    child: signInCard
+                    child: loginCard
                 ),
               ],
             ),

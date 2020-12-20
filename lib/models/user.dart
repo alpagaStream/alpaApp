@@ -3,6 +3,8 @@ class User {
   static const String PassionSinging = 'Singing';
   static const String PassionTraveling = 'Travelling';
   static const String PassionCooking = 'Cooking';
+
+  String username = '';
   String firstName = '';
   String lastName = '';
   Map passions = {
@@ -17,4 +19,12 @@ class User {
   save() {
     print('saving user using a web service');
   }
+
+  User();
+
+  User.fromJson(Map<String, dynamic> json) {
+    username = json['username'];
+  }
+
+
 }

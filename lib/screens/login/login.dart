@@ -1,27 +1,44 @@
 import 'package:alpaga/res.dart';
 import 'package:alpaga/screens/login/sign_in.dart';
+import 'package:alpaga/widgets/twitch_connect_button.dart';
 import 'package:flutter/material.dart';
 import 'package:alpaga/screens/home/home_screen.dart';
 import 'package:alpaga/services/api_service.dart';
 import 'package:alpaga/utils/color_constants.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+
+import '../../fonts.dart';
 
 class Login extends StatefulWidget {
-  Login({Key key, this.title}) : super(key: key);
-  final String title;
+
+  Login({
+    @optionalTypeArgs this.twitchCode,
+  });
+
+  final String twitchCode;
+
   @override
-  _LoginState createState() => _LoginState();
+  _LoginState createState() => _LoginState(twitchCode: twitchCode,);
 }
 
 
 class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
 
+  bool isLoggingIn = false;
   bool isChecked = false;
   AnimationController controller;
   Animation cardInAnim;
+  final String twitchCode;
+
+  _LoginState({
+    @optionalTypeArgs this.twitchCode,
+  });
 
   @override
   void initState() {
     super.initState();
+
+    finishTwitchLogin();
 
     controller = AnimationController(
       vsync: this,
@@ -32,18 +49,43 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
         curve: Interval(.5, 1.0, curve: Curves.fastOutSlowIn)));
   }
 
+  finishTwitchLogin() async {
+    if(twitchCode != null) {
+      isLoggingIn = true;
+      await ApiData.twitchLogin(twitchCode).then((value) {
+        print("ApiData.twitchLogin then : ");
+        if(ApiData.currentUser != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen(currentUser: ApiData.currentUser,)),
+          );
+        }
+        else {
+          this.setState(() {
+            isLoggingIn = false;
+          });
+        }
+      },
+          onError:(e) {
+            this.setState(() {
+              isLoggingIn = false;
+            });
+          }
+
+      );
+
+    }
+
+  }
+
   @override
   void dispose() {
+    controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final logo = Image(
-      image: AssetImage(Res.alpagaBaseLogo),
-      width: 200.0,
-      height: 200.0,
-    );
 
     final email = TextFormField(
       keyboardType: TextInputType.emailAddress,
@@ -99,7 +141,9 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
         'Forgot password?',
         style: TextStyle(color: Colors.black54),
       ),
-      onPressed: () {},
+      onPressed: () {
+
+      },
     );
 
     final signUpButton = FlatButton(
@@ -134,8 +178,12 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
           height: MediaQuery.of(context).size.height / 1.2,
           child: Column(
             children: <Widget>[
-              SizedBox(height: 62.0),
-              logo,
+              SizedBox(height: 42.0),
+              Image(
+                image: AssetImage(Res.alpagaBaseLogo),
+                width: 160.0,
+                height: 160.0,
+              ),
               SizedBox(height: 8.0),
               Center(
                   child: Text(
@@ -147,7 +195,14 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                       color: ColorConstants.alpaBlue,
                     ),
                   )),
-              SizedBox(height: 48.0),
+              SizedBox(height: 30.0),
+              isLoggingIn
+                  ? SpinKitRotatingCircle(
+                color: ColorConstants.twitchViolet,
+                size: 50.0,
+              )
+                  :  TwitchConnectButton(),
+              SizedBox(height: 30.0),
               email,
               SizedBox(height: 8.0),
               password,
@@ -175,7 +230,21 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
               SizedBox(height: 18.0),
               loginButton,
               SizedBox(height: 16.0),
-              signUpButton,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        'No account yet ?',
+                        style: TextStyle(color: Colors.black54),
+                      ),
+                      signUpButton,
+                    ],
+                  ),
+                ],
+              ),
+
             ],
           ),
         ),

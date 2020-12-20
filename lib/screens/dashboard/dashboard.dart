@@ -21,15 +21,14 @@ class _DashboardState extends State<Dashboard> {
 
   getDataFromUi() async {
     loading = false;
-    await ApiData.getData();
-    setState(() {
-      loading = true;
-    });
+    // await ApiData.getData();
+    // setState(() {
+    //   loading = true;
+    // });
   }
 
   @override
   Widget build(BuildContext context) {
-    print(MediaQuery.of(context).size.height);
     return CustomScrollView(
       slivers: <Widget>[
         SliverList(
@@ -55,14 +54,14 @@ class _DashboardState extends State<Dashboard> {
                   SizedBox(
                     height: 16,
                   ),
-                  loading
-                      ? tableCard(
-                          context,
-                          ApiData.githubTrendingModel,
-                        )
-                      : Center(
-                          child: CircularProgressIndicator(),
-                        ),
+                  // loading
+                  //     ? tableCard(
+                  //         context,
+                  //         ApiData.githubTrendingModel,
+                  //       )
+                  //     : Center(
+                  //         child: CircularProgressIndicator(),
+                  //       ),
                 ],
               ),
             ),

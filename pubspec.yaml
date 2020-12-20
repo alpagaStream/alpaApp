@@ -22,7 +22,9 @@ environment:
 
 dependencies:
   http: ^0.12.2
+  webview_flutter: ^1.0.7
   transparent_image: ^1.0.0
+  flutter_spinkit: ^4.1.2
   flutter:
     sdk: flutter
 
@@ -52,6 +54,7 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - images/alpagaBaseLogo.png
+    - images/twitchLogoButton.png
   fonts:
     - family: Fascinate
       fonts:

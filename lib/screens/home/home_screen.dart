@@ -1,3 +1,4 @@
+import 'package:alpaga/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:alpaga/screens/dashboard/dashboard.dart';
 import 'package:alpaga/screens/forms/form.dart';
@@ -5,65 +6,28 @@ import 'package:alpaga/screens/hero/hero_screen.dart';
 import 'package:alpaga/utils/color_constants.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-import '../../res.dart';
+import '../../fonts.dart';
+import 'list_drawer_button.dart';
 
 class HomeScreen extends StatefulWidget {
-  @override
-  HomeScreenState createState() => HomeScreenState();
-}
 
-class ListDrawerButton extends FlatButton {
-  ListDrawerButton({
-    @required this.onPressed,
-    @required this.selected,
-    @required this.iconData,
-    @required this.text
+  HomeScreen({
+    @required this.currentUser,
   });
 
-  final GestureTapCallback onPressed;
-  final bool selected;
-  final IconData iconData;
-  final String text;
+  final User currentUser;
 
   @override
-  Widget build(BuildContext context) {
-    return FlatButton(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(topLeft: const Radius.circular(20), bottomLeft: const Radius.circular(20)),
-      ),
-      color: selected ? Colors.white : Colors.transparent,
-      //color: Colors.grey[100],
-      onPressed: onPressed,
-
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Container(
-          padding: EdgeInsets.only(top: 22, bottom: 22, right: 22, left: 10),
-          child: Row(children: [
-            Icon(
-              iconData,
-              color: selected ? ColorConstants.darkOrange : ColorConstants.lightGrey,
-            ),
-            SizedBox(
-              width: 8,
-            ),
-            Text(
-              text,
-              style: TextStyle(
-                color: selected ? Colors.black : ColorConstants.lightGrey,
-                fontSize: 18,
-                fontFamily: 'HelveticaNeue',
-              ),
-            ),
-          ]),
-        ),
-      ),
-    );
-  }
+  HomeScreenState createState() => HomeScreenState(currentUser: currentUser);
 }
 
 class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
 
+  HomeScreenState({
+    @required this.currentUser,
+  });
+
+  final User currentUser;
 
   TabController tabController;
   int active = 0;
@@ -160,7 +124,7 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
               SizedBox(height: 8.0),
               Center(
                   child: Text(
-                    "User name",
+                    currentUser.username,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
