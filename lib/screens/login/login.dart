@@ -1,3 +1,4 @@
+import 'package:alpaga/models/user.dart';
 import 'package:alpaga/res.dart';
 import 'package:alpaga/screens/login/sign_in.dart';
 import 'package:alpaga/widgets/twitch_connect_button.dart';
@@ -24,11 +25,24 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
 
+  bool isLoggingInTwitch = false;
   bool isLoggingIn = false;
   bool isChecked = false;
   AnimationController controller;
   Animation cardInAnim;
   final String twitchCode;
+
+  final emailTextController = TextEditingController();
+  final passwordTextController = TextEditingController();
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    controller.dispose();
+    emailTextController.dispose();
+    passwordTextController.dispose();
+    super.dispose();
+  }
 
   _LoginState({
     @optionalTypeArgs this.twitchCode,
@@ -49,39 +63,48 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
         curve: Interval(.5, 1.0, curve: Curves.fastOutSlowIn)));
   }
 
-  finishTwitchLogin() async {
-    if(twitchCode != null) {
-      isLoggingIn = true;
-      await ApiData.twitchLogin(twitchCode).then((value) {
-        print("ApiData.twitchLogin then : ");
-        if(ApiData.currentUser != null) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => HomeScreen(currentUser: ApiData.currentUser,)),
-          );
-        }
-        else {
-          this.setState(() {
-            isLoggingIn = false;
-          });
-        }
-      },
-          onError:(e) {
-            this.setState(() {
-              isLoggingIn = false;
-            });
-          }
+  login() async {
 
+    isLoggingIn = true;
+
+    String email = emailTextController.text;
+    String pw1 = passwordTextController.text;
+
+    var user = await ApiData.logIn("", pw1, email);
+
+    if(user != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen(currentUser:user,)),
       );
-
     }
-
+    else {
+      this.setState(() {
+        isLoggingIn = false;
+      });
+    }
   }
 
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
+  finishTwitchLogin() async {
+
+    if(twitchCode == null) {
+      return;
+    }
+
+    isLoggingInTwitch = true;
+    var user = await ApiData.twitchLogin(twitchCode);
+
+    if(user != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen(currentUser:user,)),
+      );
+    }
+    else {
+      this.setState(() {
+        isLoggingInTwitch = false;
+      });
+    }
   }
 
   @override
@@ -91,6 +114,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
       keyboardType: TextInputType.emailAddress,
       autofocus: false,
       cursorColor: ColorConstants.darkOrange,
+      controller: emailTextController,
       decoration: InputDecoration(
         hintText: 'Email',
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
@@ -102,9 +126,9 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
 
     final password = TextFormField(
       autofocus: false,
-      initialValue: '',
       obscureText: true,
       cursorColor: ColorConstants.darkOrange,
+      controller: passwordTextController,
       decoration: InputDecoration(
         hintText: 'Password',
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
@@ -119,10 +143,11 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
       height: 40,
       child: RaisedButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => HomeScreen()),
-          );
+          login();
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(builder: (context) => HomeScreen(currentUser: User("John"))),
+          // );
         },
         padding: EdgeInsets.all(12),
         color: ColorConstants.alpaBlue,
@@ -142,7 +167,9 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
         style: TextStyle(color: Colors.black54),
       ),
       onPressed: () {
-
+        this.setState(() {
+          isLoggingInTwitch = !isLoggingInTwitch;
+        });
       },
     );
 
@@ -196,10 +223,10 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                     ),
                   )),
               SizedBox(height: 30.0),
-              isLoggingIn
-                  ? SpinKitRotatingCircle(
+              isLoggingInTwitch
+                  ? SpinKitWave(
                 color: ColorConstants.twitchViolet,
-                size: 50.0,
+                 size: 48.0,
               )
                   :  TwitchConnectButton(),
               SizedBox(height: 30.0),
@@ -228,7 +255,12 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                 ],
               ),
               SizedBox(height: 18.0),
-              loginButton,
+              isLoggingIn
+                  ? SpinKitWave(
+                color: ColorConstants.alpaBlue,
+                size: 40.0,
+              )
+                  : loginButton,
               SizedBox(height: 16.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,

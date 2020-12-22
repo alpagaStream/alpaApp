@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 class User {
   static const String PassionWriting = 'Writing';
   static const String PassionSinging = 'Singing';
@@ -20,7 +22,7 @@ class User {
     print('saving user using a web service');
   }
 
-  User();
+  User(@optionalTypeArgs this.username);
 
   User.fromJson(Map<String, dynamic> json) {
     username = json['username'];

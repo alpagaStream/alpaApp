@@ -10,7 +10,7 @@ class FormMaterial extends StatefulWidget {
 
 class _FormMaterialState extends State<FormMaterial> {
   final _formKey = GlobalKey<FormState>();
-  final _user = User();
+  final _user = User("jean");
 
   @override
   Widget build(BuildContext context) {

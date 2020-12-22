@@ -1,4 +1,5 @@
 import 'package:alpaga/models/user.dart';
+import 'package:alpaga/screens/dashboard/hosting.dart';
 import 'package:flutter/material.dart';
 import 'package:alpaga/screens/dashboard/dashboard.dart';
 import 'package:alpaga/screens/forms/form.dart';
@@ -79,7 +80,7 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
               physics: NeverScrollableScrollPhysics(),
               controller: tabController,
               children: [
-                Dashboard(),
+                Hosting(),
                 FormMaterial(),
                 HeroAnimation(),
               ],
@@ -99,7 +100,7 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
         Center(
           child: Column(
             children: <Widget>[
-              SizedBox(height: 22.0),
+              SizedBox(height: 32.0),
               Center(
                   child: Text(
                     "ALPAGA",

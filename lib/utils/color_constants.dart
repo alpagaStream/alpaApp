@@ -6,6 +6,10 @@ class ColorConstants {
   static Color alpaBlue = Color(0xFF65C8D0);
   static Color lightGrey = Color(0xFFC4C4C4);
   static Color twitchViolet = Color(0xFF673AB7);
+  static Color guestTagColor = Color(0xFF65C8D0);
+  static Color hostTagColor = Color(0xFFE15B10);
+
+
   static Color blue = Color(0xFF0D46BB);
 
 

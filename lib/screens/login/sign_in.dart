@@ -2,11 +2,13 @@
 import 'package:alpaga/res.dart';
 import 'package:alpaga/screens/login/login.dart';
 import 'package:alpaga/screens/login/twitch_login.dart';
+import 'package:alpaga/services/api_service.dart';
 import 'package:alpaga/widgets/twitch_connect_button.dart';
 import 'package:flutter/material.dart';
 import 'package:alpaga/screens/home/home_screen.dart';
 import 'package:alpaga/utils/color_constants.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../../fonts.dart';
 
@@ -22,6 +24,7 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
 
   bool isChecked = false;
+  bool isLoggingIn = false;
 
   final userNameTextController = TextEditingController();
   final emailTextController = TextEditingController();
@@ -52,6 +55,87 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
     cardInAnim = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
         parent: controller,
         curve: Interval(.5, 1.0, curve: Curves.fastOutSlowIn)));
+  }
+
+  Future<void> _showMyDialog(String text) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('AlertDialog Title'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Incorrect sign in !'),
+                Text(text),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Approve'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
+  signIn() async {
+
+    this.setState(() {
+      isLoggingIn = true;
+    });
+
+    String userName = userNameTextController.text;
+    String email = emailTextController.text;
+    String pw1 = password1TextController.text;
+    String pw2 = password2TextController.text;
+
+    if (userName.isEmpty) {
+      _showMyDialog('You must chose an user name !');
+      return;
+    }
+
+    if (email.isEmpty) {
+      _showMyDialog('Invalid email address');
+      return;
+    }
+
+    if (pw1.isEmpty) {
+      _showMyDialog('Choose a password');
+      return;
+    }
+
+    if (pw2.isEmpty || pw2 != pw1) {
+      _showMyDialog("Passwords doesn't match");
+      return;
+    }
+
+    var user = await ApiData.signIn(userName, pw1, email);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => HomeScreen(currentUser: user,)),
+    );
+
+
+    if (user != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen(currentUser: user,)),
+      );
+    }
+    else {
+      this.setState(() {
+        isLoggingIn = false;
+      });
+    }
   }
 
   @override
@@ -87,7 +171,6 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
 
     final password = TextFormField(
       autofocus: false,
-      initialValue: '',
       obscureText: true,
       cursorColor: ColorConstants.darkOrange,
       controller: password1TextController,
@@ -102,7 +185,6 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
 
     final validatePassword = TextFormField(
       autofocus: false,
-      initialValue: '',
       obscureText: true,
       cursorColor: ColorConstants.darkOrange,
       controller: password2TextController,
@@ -115,69 +197,12 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
       ),
     );
 
-    Future<void> _showMyDialog(String text) async {
-      return showDialog<void>(
-        context: context,
-        barrierDismissible: false, // user must tap button!
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('AlertDialog Title'),
-            content: SingleChildScrollView(
-              child: ListBody(
-                children: <Widget>[
-                  Text('Incorrect sign in !'),
-                  Text(text),
-                ],
-              ),
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: Text('Approve'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
-
     final loginButton = Container(
       width: 90,
       height: 40,
       child: RaisedButton(
         onPressed: () {
-
-          String userName = userNameTextController.text;
-          String email = emailTextController.text;
-          String pw1 = password1TextController.text;
-          String pw2 = password2TextController.text;
-
-          if(userName.isEmpty) {
-            _showMyDialog('You must chose an user name !');
-            return;
-          }
-
-          if(email.isEmpty) {
-            _showMyDialog('Invalid email address');
-            return;
-          }
-
-          if(pw1.isEmpty) {
-            _showMyDialog('Choose a password');
-            return;
-          }
-
-          if(pw2.isEmpty || pw2 != pw1) {
-            _showMyDialog("Passwords doesn't match");
-            return;
-          }
-
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => HomeScreen()),
-          );
+          signIn();
         },
         padding: EdgeInsets.all(12),
         color: ColorConstants.alpaBlue,
@@ -254,7 +279,12 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
               SizedBox(height: 8.0),
               validatePassword,
               SizedBox(height: 24.0),
-              loginButton,
+              isLoggingIn
+                  ? SpinKitWave(
+                color: ColorConstants.alpaBlue,
+                size: 40.0,
+              )
+                  : loginButton,
               SizedBox(height: 16.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
