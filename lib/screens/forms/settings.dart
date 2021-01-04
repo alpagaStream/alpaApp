@@ -3,7 +3,6 @@ import 'package:alpaga/widgets/bordered_textField.dart';
 import 'package:alpaga/widgets/twitch_connect_button.dart';
 import 'package:flutter/material.dart';
 
-import 'package:transparent_image/transparent_image.dart';
 
 import '../../fonts.dart';
 import '../../res.dart';
@@ -58,14 +57,14 @@ class _SettingsState extends State<Settings> {
                 child: Column(
                   children: [
                     ClipRRect(
-                borderRadius: BorderRadius.circular(140.0),
-                child: FadeInImage.assetNetwork(
-                  height: 140,
-                  width: 140,
-                  placeholder: Res.peoplePlaceHolder,
-                  image: currentUser.pictureURL,
-                ),
-              ),
+                      borderRadius: BorderRadius.circular(140.0),
+                      child: FadeInImage.assetNetwork(
+                        height: 140,
+                        width: 140,
+                        placeholder: Res.peoplePlaceHolder,
+                        image: currentUser.pictureURL,
+                      ),
+                    ),
                     Row(
                       children: [
                         Text("Username"),

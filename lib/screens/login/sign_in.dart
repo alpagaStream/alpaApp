@@ -1,7 +1,7 @@
 
 import 'package:alpaga/res.dart';
 import 'package:alpaga/screens/login/login.dart';
-import 'package:alpaga/services/ap_logini_service.dart';
+import 'package:alpaga/services/api_login_service.dart';
 import 'package:alpaga/widgets/bordered_textField.dart';
 import 'package:alpaga/widgets/twitch_connect_button.dart';
 import 'package:flutter/material.dart';

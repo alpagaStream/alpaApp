@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 import '../../fonts.dart';
+import '../../res.dart';
 
 class LiveStreamDataSource extends DataTableSource {
 
@@ -72,11 +73,11 @@ class LiveStreamDataSource extends DataTableSource {
                   Container(
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(44.0),
-                      child: FadeInImage.memoryNetwork(
+                      child: FadeInImage.assetNetwork(
                         height: 44,
                         width: 44,
-                        placeholder: kTransparentImage,
-                        image: 'https://picsum.photos/250?image=9',
+                        placeholder: Res.peoplePlaceHolder,
+                        image: liveStream.user.pictureURL,
                       ),
                     ),
                   ),
