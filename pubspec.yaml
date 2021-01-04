@@ -55,6 +55,7 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - images/alpagaBaseLogo.png
+    - images/peoplePlaceHolder.png
     - images/twitchLogoButton.png
   fonts:
     - family: Fascinate

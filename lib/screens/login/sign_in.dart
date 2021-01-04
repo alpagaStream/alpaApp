@@ -1,13 +1,12 @@
 
 import 'package:alpaga/res.dart';
 import 'package:alpaga/screens/login/login.dart';
-import 'package:alpaga/screens/login/twitch_login.dart';
-import 'package:alpaga/services/api_service.dart';
+import 'package:alpaga/services/ap_logini_service.dart';
+import 'package:alpaga/widgets/bordered_textField.dart';
 import 'package:alpaga/widgets/twitch_connect_button.dart';
 import 'package:flutter/material.dart';
 import 'package:alpaga/screens/home/home_screen.dart';
 import 'package:alpaga/utils/color_constants.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../../fonts.dart';
@@ -141,61 +140,27 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
 
-    final userName = TextFormField(
-      keyboardType: TextInputType.name,
-      autofocus: false,
-      cursorColor: ColorConstants.darkOrange,
+    final userName = BorderedTextField(
       controller: userNameTextController,
-      decoration: InputDecoration(
-        hintText: 'User Name',
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: ColorConstants.darkOrange),
-        ),
-      ),
-    );
+      hintText: 'User Name',
+    ).customize();
 
-    final email = TextFormField(
-      keyboardType: TextInputType.emailAddress,
-      autofocus: false,
-      cursorColor: ColorConstants.darkOrange,
+    final email = BorderedTextField(
       controller: emailTextController,
-      decoration: InputDecoration(
-        hintText: 'Email',
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: ColorConstants.darkOrange),
-        ),
-      ),
-    );
+      hintText: 'Email',
+    ).customize();
 
-    final password = TextFormField(
-      autofocus: false,
+    final password = BorderedTextField(
       obscureText: true,
-      cursorColor: ColorConstants.darkOrange,
       controller: password1TextController,
-      decoration: InputDecoration(
-        hintText: 'Password',
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: ColorConstants.darkOrange),
-        ),
-      ),
-    );
+      hintText: 'Password',
+    ).customize();
 
-    final validatePassword = TextFormField(
-      autofocus: false,
+    final validatePassword = BorderedTextField(
       obscureText: true,
-      cursorColor: ColorConstants.darkOrange,
       controller: password2TextController,
-      decoration: InputDecoration(
-        hintText: 'Verify Password',
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: ColorConstants.darkOrange),
-        ),
-      ),
-    );
+      hintText: 'Verify Password',
+    ).customize();
 
     final loginButton = Container(
       width: 90,
@@ -246,12 +211,12 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
         ),
         elevation: 2.0,
         child: Container(
-          padding: EdgeInsets.all(42),
+          padding: EdgeInsets.only(left: 102, right: 102, top: 42, bottom: 42),
           width: MediaQuery.of(context).size.width / 2.5,
           height: MediaQuery.of(context).size.height / 1.2,
           child: Column(
             children: <Widget>[
-              SizedBox(height: 32.0),
+              SizedBox(height: 12.0),
               Image(
                 image: AssetImage(Res.alpagaBaseLogo),
                 width: 160.0,
@@ -272,11 +237,11 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
               TwitchConnectButton(),
               SizedBox(height: 30.0),
               userName,
-              SizedBox(height: 8.0),
+              SizedBox(height: 18.0),
               email,
-              SizedBox(height: 8.0),
+              SizedBox(height: 18.0),
               password,
-              SizedBox(height: 8.0),
+              SizedBox(height: 18.0),
               validatePassword,
               SizedBox(height: 24.0),
               isLoggingIn

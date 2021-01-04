@@ -1,10 +1,11 @@
 import 'package:alpaga/models/user.dart';
 import 'package:alpaga/res.dart';
 import 'package:alpaga/screens/login/sign_in.dart';
+import 'package:alpaga/widgets/bordered_textField.dart';
 import 'package:alpaga/widgets/twitch_connect_button.dart';
 import 'package:flutter/material.dart';
 import 'package:alpaga/screens/home/home_screen.dart';
-import 'package:alpaga/services/api_service.dart';
+import 'package:alpaga/services/ap_logini_service.dart';
 import 'package:alpaga/utils/color_constants.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -110,33 +111,16 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
 
-    final email = TextFormField(
-      keyboardType: TextInputType.emailAddress,
-      autofocus: false,
-      cursorColor: ColorConstants.darkOrange,
+    final email = BorderedTextField(
       controller: emailTextController,
-      decoration: InputDecoration(
-        hintText: 'Email',
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: ColorConstants.darkOrange),
-        ),
-      ),
-    );
+      hintText: 'email',
+    ).customize();
 
-    final password = TextFormField(
-      autofocus: false,
+    final password = BorderedTextField(
       obscureText: true,
-      cursorColor: ColorConstants.darkOrange,
       controller: passwordTextController,
-      decoration: InputDecoration(
-        hintText: 'Password',
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: ColorConstants.darkOrange),
-        ),
-      ),
-    );
+      hintText: 'Password',
+    ).customize();
 
     final loginButton = Container(
       width: 90,
@@ -167,9 +151,13 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
         style: TextStyle(color: Colors.black54),
       ),
       onPressed: () {
-        this.setState(() {
-          isLoggingInTwitch = !isLoggingInTwitch;
-        });
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen(currentUser:User("John"),)),
+        );
+        // this.setState(() {
+        //   isLoggingInTwitch = !isLoggingInTwitch;
+        // });
       },
     );
 
@@ -200,7 +188,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
         ),
         elevation: 2.0,
         child: Container(
-          padding: EdgeInsets.all(42),
+          padding: EdgeInsets.only(left: 102, right: 102, top: 42, bottom: 42),
           width: MediaQuery.of(context).size.width / 2.5,
           height: MediaQuery.of(context).size.height / 1.2,
           child: Column(
@@ -231,9 +219,9 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                   :  TwitchConnectButton(),
               SizedBox(height: 30.0),
               email,
-              SizedBox(height: 8.0),
+              SizedBox(height: 18.0),
               password,
-              SizedBox(height: 24.0),
+              SizedBox(height: 12.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[

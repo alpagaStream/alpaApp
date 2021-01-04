@@ -1,148 +1,31 @@
 import 'package:alpaga/models/live_stream.dart';
 import 'package:alpaga/models/user.dart';
-import 'package:alpaga/utils/color_constants.dart';
+import 'package:alpaga/screens/dashboard/streams_history_data_source.dart';
 import 'package:flutter/material.dart';
-import 'package:alpaga/models/github_model.dart';
-import 'package:alpaga/services/api_service.dart';
-
-import 'package:alpaga/utils/raw_data.dart';
-import 'package:alpaga/widgets/table_card.dart';
-import 'package:alpaga/widgets/ticket_cards.dart';
-import 'package:intl/intl.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 import '../../fonts.dart';
+import '../../res.dart';
 
 class Hosting extends StatefulWidget {
-  @override
-  _HostingState createState() => _HostingState();
-}
 
+  Hosting({
+    @required this.currentUser,
+  });
 
-class LiveStreamDataSource extends DataTableSource {
-
-
-  final List<LiveStream> _liveStreams = <LiveStream>[
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-  ];
-
-  void _sort<T>(Comparable<T> getField(LiveStream d), bool ascending) {
-    _liveStreams.sort((LiveStream a, LiveStream b) {
-      if (!ascending) {
-        final LiveStream c = a;
-        a = b;
-        b = c;
-      }
-      final Comparable<T> aValue = getField(a);
-      final Comparable<T> bValue = getField(b);
-      return Comparable.compare(aValue, bValue);
-    });
-    notifyListeners();
-  }
-
-  int _selectedCount = 0;
+  final User currentUser;
 
   @override
-  DataRow getRow(int index) {
-    assert(index >= 0);
-    if (index >= _liveStreams.length)
-      return null;
-    final LiveStream liveStream = _liveStreams[index];
-    return new DataRow.byIndex(
-        index: index,
-        selected: liveStream.selected,
-        onSelectChanged: (bool value) {
-          if (liveStream.selected != value) {
-            _selectedCount += value ? 1 : -1;
-            assert(_selectedCount >= 0);
-            liveStream.selected = value;
-            notifyListeners();
-          }
-        },
-        cells: <DataCell>[
-          new DataCell(
-            new Container(
-              width: 200,
-              child: Row(
-                children: <Widget>[
-                  Container(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(44.0),
-                      child: FadeInImage.memoryNetwork(
-                        height: 44,
-                        width: 44,
-                        placeholder: kTransparentImage,
-                        image: 'https://picsum.photos/250?image=9',
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 24.0),
-                  Text(
-                    '${liveStream.user.username}',
-                    style: TextStyle(color: Colors.black54),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          new DataCell(new Text('${DateFormat('yyyy/MM/dd hh:mm').format(liveStream.startDate)}')),
-          new DataCell(new Text('${DateFormat('yyyy/MM/dd hh:mm').format(liveStream.endDate)}')),
-          new DataCell(new Text('${liveStream.time}')),
-          new DataCell(
-            new Container(
-              padding: EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
-              child: Text(
-                liveStream.type == LiveStreamType.host ? "HOST" : "GUEST",
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                  fontFamily: ResFont.openSans,
-                ),
-              ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all( Radius.circular(200)),
-                color: liveStream.type == LiveStreamType.host ? ColorConstants.hostTagColor :  ColorConstants.guestTagColor,
-              ),
-            ),
-          ),
-        ]
-    );
-  }
-
-  @override
-  int get rowCount => _liveStreams.length;
-
-  @override
-  bool get isRowCountApproximate => false;
-
-  @override
-  int get selectedRowCount => _selectedCount;
-
-  void _selectAll(bool checked) {
-    for (LiveStream liveStream in _liveStreams)
-      liveStream.selected = checked;
-    _selectedCount = checked ? _liveStreams.length : 0;
-    notifyListeners();
-  }
+  _HostingState createState() => _HostingState(currentUser: currentUser);
 }
 
 class _HostingState extends State<Hosting> {
+
+  _HostingState({
+    @required this.currentUser,
+  });
+
+  final User currentUser;
+
   bool loading = false;
   @override
   void initState() {
@@ -164,7 +47,7 @@ class _HostingState extends State<Hosting> {
   final LiveStreamDataSource _liveStreamsDataSource = new LiveStreamDataSource();
 
   void _sort<T>(Comparable<T> getField(LiveStream d), int columnIndex, bool ascending) {
-    _liveStreamsDataSource._sort<T>(getField, ascending);
+    _liveStreamsDataSource.sort<T>(getField, ascending);
     setState(() {
       _sortColumnIndex = columnIndex;
       _sortAscending = ascending;
@@ -196,14 +79,14 @@ class _HostingState extends State<Hosting> {
                     Column(
                       children: [
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(140.0),
-                          child: FadeInImage.memoryNetwork(
-                            height: 140,
-                            width: 140,
-                            placeholder: kTransparentImage,
-                            image: 'https://picsum.photos/250?image=9',
-                          ),
-                        ),
+                borderRadius: BorderRadius.circular(140.0),
+                child: FadeInImage.assetNetwork(
+                  height: 140,
+                  width: 140,
+                  placeholder: Res.peoplePlaceHolder,
+                  image: currentUser.pictureURL,
+                ),
+              ),
                         SizedBox(height: 8.0),
                         Center(
                             child: Text(
@@ -224,14 +107,14 @@ class _HostingState extends State<Hosting> {
                     Column(
                       children: [
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(140.0),
-                          child: FadeInImage.memoryNetwork(
-                            height: 140,
-                            width: 140,
-                            placeholder: kTransparentImage,
-                            image: 'https://picsum.photos/250?image=9',
-                          ),
-                        ),
+                borderRadius: BorderRadius.circular(140.0),
+                child: FadeInImage.assetNetwork(
+                  height: 140,
+                  width: 140,
+                  placeholder: Res.peoplePlaceHolder,
+                  image: currentUser.pictureURL,
+                ),
+              ),
                         SizedBox(height: 8.0),
                         Center(
                             child: Text(
@@ -267,13 +150,12 @@ class _HostingState extends State<Hosting> {
                   onRowsPerPageChanged: (int value) { setState(() { _rowsPerPage = value; }); },
                   sortColumnIndex: _sortColumnIndex,
                   sortAscending: _sortAscending,
-                  onSelectAll: _liveStreamsDataSource._selectAll,
+                  onSelectAll: _liveStreamsDataSource.selectAll,
                   showCheckboxColumn: false,
                   columns: <DataColumn>[
                     new DataColumn(
                         label: const Text(
                           'User name',
-
                         ),
                         onSort: (int columnIndex, bool ascending) => _sort<String>((LiveStream d) => d.user.username, columnIndex, ascending)
                     ),

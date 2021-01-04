@@ -1,23 +1,15 @@
 import 'package:flutter/cupertino.dart';
 
 class User {
-  static const String PassionWriting = 'Writing';
-  static const String PassionSinging = 'Singing';
-  static const String PassionTraveling = 'Travelling';
-  static const String PassionCooking = 'Cooking';
 
   String username = '';
+  String pictureURL = '';
   String firstName = '';
   String lastName = '';
-  Map passions = {
-    PassionWriting: false,
-    PassionSinging: false,
-    PassionTraveling: true,
-    PassionCooking: true,
-  };
-  bool monthlyNewsletter = false;
-  bool yearlyNewsletter = false;
-  bool weeklyNewsletter = true;
+  String email = '';
+  String twitchId;
+  String createdAt = '';
+
   save() {
     print('saving user using a web service');
   }

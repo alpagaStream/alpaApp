@@ -1,13 +1,12 @@
 import 'package:alpaga/models/user.dart';
 import 'package:alpaga/screens/dashboard/hosting.dart';
+import 'package:alpaga/screens/forms/settings.dart';
 import 'package:flutter/material.dart';
-import 'package:alpaga/screens/dashboard/dashboard.dart';
-import 'package:alpaga/screens/forms/form.dart';
-import 'package:alpaga/screens/hero/hero_screen.dart';
 import 'package:alpaga/utils/color_constants.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 import '../../fonts.dart';
+import '../../res.dart';
 import 'list_drawer_button.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -37,7 +36,7 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
   void initState() {
     super.initState();
 
-    tabController = new TabController(vsync: this, length: 3, initialIndex: 0)
+    tabController = new TabController(vsync: this, length: 2, initialIndex: 0)
       ..addListener(() {
         setState(() {
           active = tabController.index;
@@ -80,9 +79,8 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
               physics: NeverScrollableScrollPhysics(),
               controller: tabController,
               children: [
-                Hosting(),
-                FormMaterial(),
-                HeroAnimation(),
+                Hosting(currentUser: currentUser),
+                Settings(currentUser: currentUser),
               ],
             ),
           )
@@ -115,11 +113,11 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
               SizedBox(height: 18.0),
               ClipRRect(
                 borderRadius: BorderRadius.circular(140.0),
-                child: FadeInImage.memoryNetwork(
+                child: FadeInImage.assetNetwork(
                   height: 140,
                   width: 140,
-                  placeholder: kTransparentImage,
-                  image: 'https://picsum.photos/250?image=9',
+                  placeholder: Res.peoplePlaceHolder,
+                  image: currentUser.pictureURL,
                 ),
               ),
               SizedBox(height: 8.0),
