@@ -2,6 +2,7 @@
 import 'package:alpaga/res.dart';
 import 'package:alpaga/screens/login/login.dart';
 import 'package:alpaga/services/api_login_service.dart';
+import 'package:alpaga/utils/dialog.dart';
 import 'package:alpaga/widgets/bordered_textField.dart';
 import 'package:alpaga/widgets/twitch_connect_button.dart';
 import 'package:flutter/material.dart';
@@ -56,35 +57,6 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
         curve: Interval(.5, 1.0, curve: Curves.fastOutSlowIn)));
   }
 
-  Future<void> _showMyDialog(String text) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('AlertDialog Title'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('Incorrect sign in !'),
-                Text(text),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Approve'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-
   signIn() async {
 
     this.setState(() {
@@ -97,26 +69,26 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
     String pw2 = password2TextController.text;
 
     if (userName.isEmpty) {
-      _showMyDialog('You must chose an user name !');
+      MyDialog.showMyDialog(context, 'Incorrect sign in !', 'You must chose an user name !');
       return;
     }
 
     if (email.isEmpty) {
-      _showMyDialog('Invalid email address');
+      MyDialog.showMyDialog(context, 'Incorrect sign in !', 'Invalid email address');
       return;
     }
 
     if (pw1.isEmpty) {
-      _showMyDialog('Choose a password');
+      MyDialog.showMyDialog(context, 'Incorrect sign in !', 'Choose a password');
       return;
     }
 
     if (pw2.isEmpty || pw2 != pw1) {
-      _showMyDialog("Passwords doesn't match");
+      MyDialog.showMyDialog(context, 'Incorrect sign in !', "Passwords doesn't match");
       return;
     }
 
-    var user = await ApiData.signIn(userName, pw1, email);
+    var user = await ApiLoginServices.signIn(userName, pw1, email);
 
     Navigator.push(
       context,
@@ -140,27 +112,41 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
 
-    final userName = BorderedTextField(
+    final userName = TextFormField(
+      keyboardType: TextInputType.name,
+      autofocus: false,
+      obscureText: false,
+      cursorColor: ColorConstants.darkOrange,
+      decoration: CommonStyle.textFieldStyle(),
       controller: userNameTextController,
-      hintText: 'User Name',
-    ).customize();
+    );
 
-    final email = BorderedTextField(
+    final email = TextFormField(
+      keyboardType: TextInputType.emailAddress,
+      autofocus: false,
+      obscureText: false,
+      cursorColor: ColorConstants.darkOrange,
       controller: emailTextController,
-      hintText: 'Email',
-    ).customize();
+      decoration: CommonStyle.textFieldStyle(hintTextStr: "email"),
+    );
 
-    final password = BorderedTextField(
+    final password = TextFormField(
+      keyboardType: TextInputType.emailAddress,
+      autofocus: false,
+      cursorColor: ColorConstants.darkOrange,
+      decoration: CommonStyle.textFieldStyle(hintTextStr: "Password"),
       obscureText: true,
       controller: password1TextController,
-      hintText: 'Password',
-    ).customize();
+    );
 
-    final validatePassword = BorderedTextField(
+    final validatePassword = TextFormField(
+      keyboardType: TextInputType.emailAddress,
+      autofocus: false,
+      cursorColor: ColorConstants.darkOrange,
+      decoration: CommonStyle.textFieldStyle(hintTextStr: "Verify Password"),
       obscureText: true,
       controller: password2TextController,
-      hintText: 'Verify Password',
-    ).customize();
+    );
 
     final loginButton = Container(
       width: 90,
@@ -195,8 +181,6 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
         Navigator.pushReplacement(
           context,
           PageRouteBuilder(
-
-
             pageBuilder: (context, animation1, animation2) => Login(),
             transitionDuration: Duration(seconds: 0),
           ),

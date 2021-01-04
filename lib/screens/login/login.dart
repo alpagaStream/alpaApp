@@ -1,11 +1,11 @@
 import 'package:alpaga/models/user.dart';
 import 'package:alpaga/res.dart';
 import 'package:alpaga/screens/login/sign_in.dart';
+import 'package:alpaga/services/api_login_service.dart';
 import 'package:alpaga/widgets/bordered_textField.dart';
 import 'package:alpaga/widgets/twitch_connect_button.dart';
 import 'package:flutter/material.dart';
 import 'package:alpaga/screens/home/home_screen.dart';
-import 'package:alpaga/services/api_login_service.dart';
 import 'package:alpaga/utils/color_constants.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -71,7 +71,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
     String email = emailTextController.text;
     String pw1 = passwordTextController.text;
 
-    var user = await ApiData.logIn("", pw1, email);
+    var user = await ApiLoginServices.logIn("", pw1, email);
 
     if(user != null) {
       Navigator.push(
@@ -93,7 +93,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
     }
 
     isLoggingInTwitch = true;
-    var user = await ApiData.twitchLogin(twitchCode);
+    var user = await ApiLoginServices.twitchLogin(twitchCode);
 
     if(user != null) {
       Navigator.push(
@@ -111,16 +111,23 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
 
-    final email = BorderedTextField(
+    final email = TextFormField(
+      keyboardType: TextInputType.emailAddress,
+      autofocus: false,
+      obscureText: false,
+      cursorColor: ColorConstants.darkOrange,
       controller: emailTextController,
-      hintText: 'email',
-    ).customize();
+      decoration: CommonStyle.textFieldStyle(hintTextStr: "email"),
+    );
 
-    final password = BorderedTextField(
+    final password = TextFormField(
       obscureText: true,
       controller: passwordTextController,
-      hintText: 'Password',
-    ).customize();
+      keyboardType: TextInputType.text,
+      autofocus: false,
+      cursorColor: ColorConstants.darkOrange,
+      decoration: CommonStyle.textFieldStyle(hintTextStr: "Password"),
+    );
 
     final loginButton = Container(
       width: 90,

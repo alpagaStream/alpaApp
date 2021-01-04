@@ -9,6 +9,7 @@ class User {
   String email = '';
   String twitchId;
   String createdAt = '';
+  String password = '';
 
   save() {
     print('saving user using a web service');

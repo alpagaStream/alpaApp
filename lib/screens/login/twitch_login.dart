@@ -18,7 +18,23 @@ class TwitchLogin extends StatefulWidget {
   static void login(BuildContext context) {
 
     if(PlatformUtils.isWebPlatform()) {
-      html.window.location.href = TwitchLogin.twitchUrl;
+
+      var currentUrl = html.window.location.href.substring(0, html.window.location.href.length);
+      print(currentUrl);
+      final uri = Uri.https("id.twitch.tv", "oauth2/authorize",
+          {
+            "client_id": "ondqxzgmbkta5pdx97tgrh8ds49no8",
+            "redirect_uri":  currentUrl,
+            // "redirect_uri": "http://localhost:54632/#",
+            "response_type": "code",
+            "scope": "user_read chat:read chat:edit channel:moderate whispers:read whispers:edit channel_editor",
+          }
+      );
+
+      // redirect_uri=http%3A%2F%2Flocalhost%3A54632%2F%23
+      print(uri);
+      // return;
+      html.window.location.href = uri.toString();
     }
     else {
       Navigator.pushReplacement(
