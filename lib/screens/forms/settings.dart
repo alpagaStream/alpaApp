@@ -60,7 +60,7 @@ class _SettingsState extends State<Settings> {
         return;
       }
 
-      var user = await ApiUserData.updateUser(currentUser, userName, pw1);
+      var user = await ApiUserData.updateUser(user:currentUser, userName:userName, password: pw1);
 
       setState(() {
         editing = false;

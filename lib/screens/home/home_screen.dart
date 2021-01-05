@@ -1,9 +1,9 @@
 import 'package:alpaga/models/user.dart';
 import 'package:alpaga/screens/dashboard/hosting.dart';
 import 'package:alpaga/screens/forms/settings.dart';
+import 'package:alpaga/services/api_user_data.dart';
 import 'package:flutter/material.dart';
 import 'package:alpaga/utils/color_constants.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 import '../../fonts.dart';
 import '../../res.dart';
@@ -27,7 +27,7 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
     @required this.currentUser,
   });
 
-  final User currentUser;
+  User currentUser;
 
   TabController tabController;
   int active = 0;
@@ -48,6 +48,18 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
   void dispose() {
     tabController.dispose();
     super.dispose();
+  }
+
+  toggleAutoHosting(bool value) async {
+
+    final oldUser = currentUser;
+    setState(() {
+      currentUser.autoHostActive = value;
+    });
+    final user = await ApiUserData.updateUser(user: currentUser, autoHosting: value);
+    setState(() {
+      currentUser = user ?? oldUser;
+    });
   }
 
   @override
@@ -132,10 +144,10 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
                     ),
                   )
               ),
-              SizedBox(height: 22.0),
             ],
           ),
         ),
+        SizedBox(height: 22.0),
         Container(
           margin: EdgeInsets.only(top: 12, left: 25),
           child: Column(
@@ -160,6 +172,33 @@ class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMi
                     drawerStatus ? Navigator.pop(context) : print("");
                   }
               ),
+              SizedBox(height: 22.0),
+              Center(
+                child: Row(
+                  // mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Switch(
+                      value: currentUser.autoHostActive,
+                      onChanged: (value) {
+                        setState(() {
+                          toggleAutoHosting(value);
+                        });
+                      },
+                      activeTrackColor: ColorConstants.alpaBlue.withOpacity(0.7),
+                      activeColor: ColorConstants.alpaBlue,
+                    ),
+                    Text(
+                      "Auto Hosting",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        fontFamily: ResFont.openSans,
+                      ),
+                    ),
+                  ],
+                ),
+              )
             ],
           ),
         ),

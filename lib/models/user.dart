@@ -10,6 +10,7 @@ class User {
   String twitchId;
   String createdAt = '';
   String password = '';
+  bool autoHostActive = false;
 
   save() {
     print('saving user using a web service');

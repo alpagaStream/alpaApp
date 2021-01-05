@@ -7,13 +7,22 @@ import 'dart:convert';
 
 class ApiUserData {
 
-  static  Future<User> updateUser(User user, String userName, String password) async {
+  static  Future<User> updateUser({
+    User user,
+    String userName,
+    String password,
+    bool autoHosting,
+  } ) async {
 
     print("********* update user ***********");
     var url = ApiData.baseURL + 'users/current';
-    var paramsMap = {
-      "username": userName,
-    };
+    var paramsMap = { };
+    if(userName != null && userName.isNotEmpty) {
+      paramsMap["username"] = userName;
+    }
+    if(autoHosting != null) {
+      paramsMap["autoHosting"] = autoHosting;
+    }
     if(password != null && password.isNotEmpty) {
       paramsMap["password"] = password;
     }
@@ -23,12 +32,16 @@ class ApiUserData {
     var response = await http.patch(url, body: params, headers: ApiData.apiHeaders());
     print(response.body);
     if (response.statusCode == 200) {
+      if(autoHosting != null) {
+        user.autoHostActive = autoHosting;
+      }
+      if(userName != null && userName.isNotEmpty) {
         user.username = userName;
-        if(password != null && password.isNotEmpty) {
-          user.password = password;
-        }
-
-        return user;
+      }
+      if(password != null && password.isNotEmpty) {
+        user.password = password;
+      }
+      return user;
     } else {
       print("Request $url failed with status: ${response.statusCode}.");
       return null;
