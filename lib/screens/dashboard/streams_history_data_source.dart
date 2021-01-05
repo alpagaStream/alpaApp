@@ -1,10 +1,8 @@
 import 'package:alpaga/models/live_stream.dart';
-import 'package:alpaga/models/user.dart';
 import 'package:alpaga/utils/color_constants.dart';
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 import '../../fonts.dart';
 import '../../res.dart';
@@ -12,24 +10,7 @@ import '../../res.dart';
 class LiveStreamDataSource extends DataTableSource {
 
 
-  final List<LiveStream> _liveStreams = <LiveStream>[
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-    new LiveStream(User("Quentin"), DateTime.now(), DateTime.now(), 100, LiveStreamType.host),
-  ];
+  List<LiveStream> _liveStreams = <LiveStream>[];
 
   void sort<T>(Comparable<T> getField(LiveStream d), bool ascending) {
     _liveStreams.sort((LiveStream a, LiveStream b) {
@@ -46,6 +27,13 @@ class LiveStreamDataSource extends DataTableSource {
   }
 
   int _selectedCount = 0;
+
+  void setStreamHistory(List<LiveStream> streams){
+
+    _liveStreams = streams;
+    notifyListeners();
+
+  }
 
   @override
   DataRow getRow(int index) {
