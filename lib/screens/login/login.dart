@@ -2,6 +2,7 @@ import 'package:alpaga/models/user.dart';
 import 'package:alpaga/res.dart';
 import 'package:alpaga/screens/login/sign_in.dart';
 import 'package:alpaga/services/api_login_service.dart';
+import 'package:alpaga/utils/dialog.dart';
 import 'package:alpaga/widgets/bordered_textField.dart';
 import 'package:alpaga/widgets/twitch_connect_button.dart';
 import 'package:flutter/material.dart';
@@ -83,6 +84,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
       this.setState(() {
         isLoggingIn = false;
       });
+      MyDialog.showMyDialog(context, "Invalid Password", "Check your connection identifier and password");
     }
   }
 

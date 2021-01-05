@@ -20,6 +20,8 @@ class User {
 
   User.fromJson(Map<String, dynamic> json) {
     username = json['username'];
+    autoHostActive = json['autoHosting'] ?? false;
+    twitchId = json['twitch']['id'];
   }
 
 
